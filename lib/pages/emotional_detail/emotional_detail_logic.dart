@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 class EmotionalDetailLogic extends GetxController {
   DBEmotional dbEmotional = Get.find();
 
-  late EmotionalEntity entity;
+  var entity = Rxn<EmotionalEntity>();
   var reflectionText = ''.obs;
 
   @override
@@ -18,8 +18,9 @@ class EmotionalDetailLogic extends GetxController {
 
   void loadDetail(int id) async {
     final allData = await dbEmotional.getEmotionalAllData();
-    entity = allData.firstWhere((e) => e.id == id);
-    reflectionText.value = entity.reflection ?? '';
+    final foundEntity = allData.firstWhere((e) => e.id == id);
+    entity.value = foundEntity;
+    reflectionText.value = foundEntity.reflection ?? '';
   }
 
   void saveReflection() async {
@@ -28,9 +29,10 @@ class EmotionalDetailLogic extends GetxController {
       return;
     }
 
-    await dbEmotional.updateReflection(entity.id, reflectionText.value);
+    if (entity.value == null) return;
+
+    await dbEmotional.updateReflection(entity.value!.id, reflectionText.value);
     Fluttertoast.showToast(msg: 'Reflection saved successfully');
-    Get.back(result: true); 
+    Get.back(result: true);
   }
 }
-

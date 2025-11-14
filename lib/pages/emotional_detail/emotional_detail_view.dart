@@ -13,37 +13,31 @@ class EmotionalDetailPage extends GetView<EmotionalDetailLogic> {
         title: const Text('Record Detail'),
         backgroundColor: primaryColor,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: <Widget>[
-          
-          _buildEmotionHeader(),
-          const SizedBox(height: 15),
-
-          
-          _buildIntensitySection(),
-          const SizedBox(height: 15),
-
-          
-          _buildTriggersSection(),
-          const SizedBox(height: 15),
-
-          
-          _buildFeelingsSection(),
-          const SizedBox(height: 15),
-
-          
-          _buildContentSection(),
-          const SizedBox(height: 15),
-
-          
-          _buildReflectionSection(),
-          const SizedBox(height: 20),
-
-          
-          _buildSaveButton(),
-        ].toColumn(),
-      ),
+      body: Obx(() {
+        if (controller.entity.value == null) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: <Widget>[
+            _buildEmotionHeader(),
+            const SizedBox(height: 15),
+            _buildIntensitySection(),
+            const SizedBox(height: 15),
+            _buildTriggersSection(),
+            const SizedBox(height: 15),
+            _buildFeelingsSection(),
+            const SizedBox(height: 15),
+            _buildContentSection(),
+            const SizedBox(height: 15),
+            _buildReflectionSection(),
+            const SizedBox(height: 20),
+            _buildSaveButton(),
+          ].toColumn(),
+        );
+      }),
     );
   }
 
@@ -63,13 +57,13 @@ class EmotionalDetailPage extends GetView<EmotionalDetailLogic> {
       ),
       child: <Widget>[
         Image.asset(
-          'assets/icon${controller.entity.type}.png',
+          'assets/icon${controller.entity.value!.type}.png',
           width: 60,
           height: 60,
         ),
         const SizedBox(height: 10),
         Text(
-          moodTypes[controller.entity.type],
+          moodTypes[controller.entity.value!.type],
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w900,
@@ -78,7 +72,7 @@ class EmotionalDetailPage extends GetView<EmotionalDetailLogic> {
         ),
         const SizedBox(height: 5),
         Text(
-          controller.entity.createdTimeStr,
+          controller.entity.value!.createdTimeStr,
           style: const TextStyle(
             fontSize: 14,
             color: Colors.grey,
@@ -111,12 +105,12 @@ class EmotionalDetailPage extends GetView<EmotionalDetailLogic> {
         Row(
           children: [
             Text(
-              controller.entity.intensityStars,
+              controller.entity.value!.intensityStars,
               style: const TextStyle(fontSize: 28, color: Colors.amber),
             ),
             const SizedBox(width: 10),
             Text(
-              '${controller.entity.intensity} / 5',
+              '${controller.entity.value!.intensity} / 5',
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
           ],
@@ -145,7 +139,7 @@ class EmotionalDetailPage extends GetView<EmotionalDetailLogic> {
           ],
         ),
         const SizedBox(height: 10),
-        controller.entity.triggers.isEmpty
+        controller.entity.value!.triggers.isEmpty
             ? const Text(
                 'None',
                 style: TextStyle(fontSize: 14, color: Colors.grey),
@@ -153,7 +147,7 @@ class EmotionalDetailPage extends GetView<EmotionalDetailLogic> {
             : Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: controller.entity.triggers.map((trigger) {
+                children: controller.entity.value!.triggers.map((trigger) {
                   return Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -197,7 +191,7 @@ class EmotionalDetailPage extends GetView<EmotionalDetailLogic> {
           ],
         ),
         const SizedBox(height: 10),
-        controller.entity.physicalFeelings.isEmpty
+        controller.entity.value!.physicalFeelings.isEmpty
             ? const Text(
                 'None',
                 style: TextStyle(fontSize: 14, color: Colors.grey),
@@ -205,7 +199,7 @@ class EmotionalDetailPage extends GetView<EmotionalDetailLogic> {
             : Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: controller.entity.physicalFeelings.map((feeling) {
+                children: controller.entity.value!.physicalFeelings.map((feeling) {
                   return Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -250,12 +244,12 @@ class EmotionalDetailPage extends GetView<EmotionalDetailLogic> {
         ),
         const SizedBox(height: 10),
         Text(
-          controller.entity.content.isEmpty
+          controller.entity.value!.content.isEmpty
               ? 'No notes'
-              : controller.entity.content,
+              : controller.entity.value!.content,
           style: TextStyle(
             fontSize: 14,
-            color: controller.entity.content.isEmpty
+            color: controller.entity.value!.content.isEmpty
                 ? Colors.grey
                 : Colors.black87,
             height: 1.5,
@@ -302,14 +296,14 @@ class EmotionalDetailPage extends GetView<EmotionalDetailLogic> {
                 controller.reflectionText.value = v;
               },
             )),
-        if (controller.entity.hasReflection) ...[
+        if (controller.entity.value!.hasReflection) ...[
           const SizedBox(height: 10),
           Row(
             children: [
               const Icon(Icons.schedule, size: 14, color: Colors.grey),
               const SizedBox(width: 5),
               Text(
-                'Last updated: ${controller.entity.reflectionTime != null ? controller.entity.reflectionTime!.toString().substring(0, 16) : ""}',
+                'Last updated: ${controller.entity.value!.reflectionTime != null ? controller.entity.value!.reflectionTime!.toString().substring(0, 16) : ""}',
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ],
